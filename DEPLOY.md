@@ -24,11 +24,15 @@
    - **Build command**: `npm run build`
    - **Build output directory**: `dist`
    - **Root directory**: `/`（留空或填写 `/`）
-   - **Node version**: `20`（在 Environment variables 中设置 `NODE_VERSION=20`）
+   - **⚠️ 重要：Node.js 版本设置**
+     - 在 **Environment variables** 部分添加环境变量
+     - 变量名：`NODE_VERSION`
+     - 变量值：`20`
+     - 或者使用 `.nvmrc` 文件（项目已包含）
 
-5. **环境变量（可选）**
-   - 如果需要环境变量，在 **Environment variables** 中添加
-   - 例如：`NODE_VERSION=20`
+5. **环境变量（必需）**
+   - **必须添加**：`NODE_VERSION=20`（Wrangler 需要 Node.js v20+）
+   - 其他环境变量根据需要添加
 
 6. **保存并部署**
    - 点击 **Save and Deploy**
@@ -36,22 +40,30 @@
 
 ### 方式二：使用 Wrangler CLI
 
-1. **安装 Wrangler**
+**⚠️ 重要：Wrangler 需要 Node.js v20.0.0 或更高版本**
+
+1. **检查 Node.js 版本**
+   ```bash
+   node --version
+   ```
+   如果版本低于 v20，请先升级 Node.js（见下方说明）
+
+2. **安装 Wrangler**
    ```bash
    npm install -g wrangler
    ```
 
-2. **登录 Cloudflare**
+3. **登录 Cloudflare**
    ```bash
    wrangler login
    ```
 
-3. **创建 Pages 项目**
+4. **创建 Pages 项目**
    ```bash
    wrangler pages project create timora
    ```
 
-4. **部署**
+5. **部署**
    ```bash
    # 先构建
    npm run build
@@ -59,6 +71,28 @@
    # 然后部署
    wrangler pages deploy dist --project-name=timora
    ```
+
+**升级 Node.js 的方法：**
+
+- **使用 nvm（推荐）**：
+  ```bash
+  # 安装 nvm（如果还没有）
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  
+  # 安装并使用 Node.js 20
+  nvm install 20
+  nvm use 20
+  
+  # 或者使用项目中的 .nvmrc 文件
+  nvm use
+  ```
+
+- **使用 Volta**：
+  ```bash
+  volta install node@20
+  ```
+
+- **直接下载**：从 https://nodejs.org/ 下载 Node.js v20 LTS
 
 ### 方式三：通过 GitHub Actions 自动部署
 
@@ -153,11 +187,24 @@ jobs:
 /*    /index.html   200
 ```
 
-### 2. 构建失败
+### 2. 构建失败 / Node.js 版本错误
 
-- 检查 Node.js 版本是否为 20
-- 确保所有依赖都已正确安装
-- 查看 Cloudflare 构建日志中的错误信息
+**错误信息**：`Wrangler requires at least Node.js v20.0.0`
+
+**解决方案**：
+- **在 Cloudflare Dashboard 中**：
+  - 进入项目设置 → **Environment variables**
+  - 添加 `NODE_VERSION=20`
+  - 重新部署
+
+- **使用 Wrangler CLI 时**：
+  - 升级本地 Node.js 到 v20+
+  - 使用 nvm：`nvm install 20 && nvm use 20`
+  - 或使用项目中的 `.nvmrc`：`nvm use`
+
+- **检查 Node.js 版本**：
+  - 确保所有依赖都已正确安装
+  - 查看 Cloudflare 构建日志中的错误信息
 
 ### 3. 静态资源加载失败
 

@@ -56,15 +56,31 @@ Timora/
 └── tailwind.config.js
 ```
 
+## 系统要求
+
+- **Node.js**: >= 20.0.0（必需，Wrangler 要求）
+- **npm**: >= 9.0.0
+
+> ⚠️ **重要**：如果使用 Wrangler CLI 部署，必须使用 Node.js v20 或更高版本。
+> 查看 [NODE_VERSION.md](./NODE_VERSION.md) 了解如何升级 Node.js。
+
 ## 安装与运行
 
-### 1. 安装依赖
+### 1. 检查 Node.js 版本
+
+```bash
+node --version  # 应该显示 v20.x.x 或更高
+```
+
+如果版本低于 v20，请先升级（见 [NODE_VERSION.md](./NODE_VERSION.md)）。
+
+### 2. 安装依赖
 
 ```bash
 npm install
 ```
 
-### 2. 启动开发服务器
+### 3. 启动开发服务器
 
 ```bash
 npm run dev

@@ -27,6 +27,15 @@
 - ✅ `DEPLOY.md` - 详细部署指南
 - ✅ `README.md` - 已添加部署说明
 
+## ⚠️ Node.js 版本要求
+
+**重要**：Wrangler 和 Cloudflare Pages 需要 Node.js v20.0.0 或更高版本。
+
+- 如果使用 Wrangler CLI，请先升级本地 Node.js 到 v20+
+- 在 Cloudflare Dashboard 中，必须在环境变量中设置 `NODE_VERSION=20`
+
+详细说明请查看 [NODE_VERSION.md](./NODE_VERSION.md)。
+
 ## 🚀 快速部署
 
 ### 方式一：通过 Cloudflare Dashboard（最简单）
@@ -40,21 +49,32 @@
    - **Build command**: `npm run build`
    - **Build output directory**: `dist`
    - **Root directory**: `/`（留空）
-6. 点击 **Save and Deploy**
+6. **⚠️ 重要：设置 Node.js 版本**
+   - 在 **Environment variables** 部分
+   - 添加变量：`NODE_VERSION=20`
+7. 点击 **Save and Deploy**
 
 ### 方式二：使用 Wrangler CLI
 
+**⚠️ 必须先升级 Node.js 到 v20+**
+
 ```bash
-# 安装 Wrangler
+# 1. 检查并升级 Node.js（如果需要）
+node --version  # 应该显示 v20.x.x
+# 如果版本低于 v20，使用 nvm 升级：
+nvm install 20
+nvm use 20
+
+# 2. 安装 Wrangler
 npm install -g wrangler
 
-# 登录
+# 3. 登录
 wrangler login
 
-# 构建
+# 4. 构建
 npm run build
 
-# 部署
+# 5. 部署
 wrangler pages deploy dist --project-name=timora
 ```
 
@@ -69,10 +89,12 @@ wrangler pages deploy dist --project-name=timora
 ## 📋 部署检查清单
 
 部署前确认：
+- [ ] **Node.js 版本 >= 20.0.0**（使用 Wrangler CLI 时必需）
 - [ ] 代码已推送到 Git 仓库
 - [ ] 本地构建成功（`npm run build`）
 - [ ] `dist` 目录已生成
 - [ ] `public/_redirects` 文件存在
+- [ ] 在 Cloudflare Dashboard 中设置了 `NODE_VERSION=20` 环境变量
 
 部署后验证：
 - [ ] 访问默认域名（`your-project.pages.dev`）
@@ -90,10 +112,17 @@ wrangler pages deploy dist --project-name=timora
 ### 问题 1: 路由返回 404
 **解决方案**: 确保 `public/_redirects` 文件存在且内容为 `/*    /index.html   200`
 
-### 问题 2: 构建失败
+### 问题 2: 构建失败 / Node.js 版本错误
+**错误信息**：`Wrangler requires at least Node.js v20.0.0. You are using v18.x.x`
+
 **解决方案**: 
-- 检查 Node.js 版本是否为 20
-- 在 Cloudflare Dashboard 中设置环境变量 `NODE_VERSION=20`
+- **使用 Wrangler CLI**：升级本地 Node.js 到 v20+
+  ```bash
+  nvm install 20
+  nvm use 20
+  ```
+- **Cloudflare Dashboard**：在环境变量中设置 `NODE_VERSION=20`
+- 查看 [NODE_VERSION.md](./NODE_VERSION.md) 了解详细步骤
 
 ### 问题 3: 静态资源加载失败
 **解决方案**: 确保 `vite.config.ts` 中 `base` 设置为 `/`
@@ -101,6 +130,7 @@ wrangler pages deploy dist --project-name=timora
 ## 📚 相关文档
 
 - [DEPLOY.md](./DEPLOY.md) - 详细部署指南
+- [NODE_VERSION.md](./NODE_VERSION.md) - **Node.js 版本要求和升级指南** ⚠️
 - [README.md](./README.md) - 项目说明
 - [.github/workflows/README.md](./.github/workflows/README.md) - GitHub Actions 说明
 
