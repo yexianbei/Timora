@@ -28,11 +28,16 @@
    - 选择 `yexianbei/Timora` 仓库
 
 4. **配置构建设置**
-   - **Framework preset**: `Vite`
+   - **Framework preset**: `Vite` (或选择 "None" 手动配置)
    - **Build command**: `npm run build`
    - **Build output directory**: `dist`
    - **Root directory**: `/` (留空)
-   - **Node version**: `18` (或更高)
+   - **Node version**: `20` (必须使用 Node.js 20 或更高版本)
+   
+   ⚠️ **重要提示**：
+   - 确保选择的是 **Pages** 而不是 **Workers**
+   - 如果看到 "Deploy command" 选项，请留空或删除 `npx wrangler deploy`
+   - Cloudflare Pages 会自动使用 `npm run build` 命令
 
 5. **环境变量**（如果需要）
    - 通常不需要额外的环境变量
@@ -42,11 +47,17 @@
    - 点击 "Save and Deploy"
    - Cloudflare 会自动构建并部署你的应用
 
-### 方法二：使用 Wrangler CLI
+### 方法二：使用 Wrangler CLI（仅用于 Pages，不是 Workers）
+
+⚠️ **注意**：此方法需要 Node.js 20+，因为 wrangler 4.x 需要 Node.js 20+
 
 1. **安装 Wrangler CLI**
    ```bash
    npm install -g wrangler
+   ```
+   确保你的 Node.js 版本 >= 20：
+   ```bash
+   node --version  # 应该显示 v20.x.x 或更高
    ```
 
 2. **登录 Cloudflare**
@@ -63,6 +74,8 @@
    ```bash
    wrangler pages deploy dist --project-name=timora
    ```
+   
+   ⚠️ **重要**：使用 `wrangler pages deploy` 而不是 `wrangler deploy`
 
 ### 方法三：通过 GitHub Actions（自动部署）
 
@@ -133,24 +146,40 @@ npm run build
 
 ## 常见问题
 
-### 1. 构建失败
-- 检查 Node.js 版本（需要 >= 18）
+### 1. 错误：Wrangler requires at least Node.js v20.0.0
+
+**问题**：Cloudflare Pages 误用了 `wrangler deploy` 命令
+
+**解决方案**：
+- 在 Cloudflare Pages 设置中，确保 **Deploy command** 字段为空或删除 `npx wrangler deploy`
+- 只保留 **Build command**: `npm run build`
+- 确保 **Framework preset** 选择 `Vite` 或 `None`
+- 删除项目中的 `wrangler.toml` 文件（如果存在）
+
+### 2. 构建失败
+- 检查 Node.js 版本（需要 >= 20）
 - 确保所有依赖都已安装
 - 查看构建日志中的错误信息
 
-### 2. 路由 404 错误
+### 3. 路由 404 错误
 - 确保 `public/_redirects` 文件存在
 - 检查文件内容是否正确：`/*    /index.html   200`
 
-### 3. 静态资源加载失败
+### 4. 静态资源加载失败
 - 检查 `vite.config.ts` 中的 `base` 配置（如果需要）
 - 确保所有资源路径都是相对的
 
-### 4. 环境变量
+### 5. 环境变量
 如果需要环境变量，在 Cloudflare Pages 设置中添加：
 - 进入项目设置
 - 找到 "Environment variables"
 - 添加变量（如 `VITE_API_URL`）
+
+### 6. Cloudflare Pages 误判为 Workers 项目
+如果 Cloudflare Pages 尝试使用 `wrangler deploy`：
+- 检查项目中是否有 `wrangler.toml` 文件，如果有请删除
+- 确保在创建项目时选择的是 **Pages** 而不是 **Workers**
+- 在项目设置中检查 "Deploy command" 是否为空
 
 ## 持续部署
 
