@@ -21,33 +21,44 @@ Wrangler requires at least Node.js v20.0.0. You are using v18.x.x
 
 ---
 
-### 2. wrangler.toml 配置错误
+### 2. wrangler 部署命令错误
 
 **错误信息**：
 ```
-[WARNING] Because you've defined a [site] configuration, we're defaulting to "workers-site"
-[ERROR] The entry-point file at "workers-site/index.js" was not found
+If are uploading a directory of assets, you can either:
+- Specify the path to the directory of assets via the command line
+- Or create a "wrangler.jsonc" file containing...
 ```
 
 **原因**：
-- `wrangler.toml` 文件是为 Cloudflare Workers 设计的
-- Cloudflare Pages 项目不需要这个文件
-- 如果存在，Wrangler 会误认为这是一个 Workers 项目
+- Cloudflare 构建系统误认为这是 Workers 项目
+- 使用了错误的部署命令或配置
 
 **解决方案**：
-```bash
-# 删除 wrangler.toml 文件
-rm wrangler.toml
 
-# 然后重新部署
-npm run build
+**方案 A：在 Dashboard 中正确配置（推荐）**
+1. 确保在 **Pages** 部分创建项目（不是 Workers）
+2. Framework preset 选择 `Vite`
+3. 构建命令：`npm run build`
+4. 输出目录：`dist`
+5. 环境变量：`NODE_VERSION=20`
+
+**方案 B：检查 wrangler.jsonc 文件**
+- 项目已包含 `wrangler.jsonc` 文件
+- 确保文件内容正确（已自动配置）
+
+**方案 C：使用正确的 CLI 命令**
+```bash
+# 错误：wrangler deploy（这是 Workers 命令）
+# 正确：wrangler pages deploy（这是 Pages 命令）
 wrangler pages deploy dist --project-name=timora
 ```
 
 **说明**：
-- Cloudflare Pages 使用 `cloudflare-pages.json` 或 Dashboard 配置
-- 不需要 `wrangler.toml` 文件
-- 如果以后需要使用 Workers 功能，可以重新创建并正确配置
+- Cloudflare Pages 和 Workers 是不同的产品
+- Pages 使用 `wrangler pages deploy`
+- Workers 使用 `wrangler deploy`
+- 项目已配置 `wrangler.jsonc` 来明确这是 Pages 项目
 
 ---
 

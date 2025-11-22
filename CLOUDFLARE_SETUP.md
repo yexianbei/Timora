@@ -18,6 +18,7 @@
 ### 3. Cloudflare Pages 配置文件
 - ✅ `cloudflare-pages.json` - Cloudflare Pages 配置文件
 - ✅ `.cloudflare/cloudflare-pages.json` - 备用配置文件
+- ✅ `wrangler.jsonc` - 明确指定这是 Pages 项目（不是 Workers）
 
 ### 4. GitHub Actions 自动部署
 - ✅ `.github/workflows/deploy.yml` - 自动部署工作流
@@ -45,10 +46,11 @@
 3. 选择 **Connect to Git**
 4. 选择你的仓库
 5. 配置构建设置：
-   - **Framework preset**: `Vite`
+   - **Framework preset**: `Vite`（⚠️ 重要：选择 Vite，不要选择 Workers）
    - **Build command**: `npm run build`
    - **Build output directory**: `dist`
    - **Root directory**: `/`（留空）
+   - **⚠️ 确保这是 Pages 项目，不是 Workers 项目**
 6. **⚠️ 重要：设置 Node.js 版本**
    - 在 **Environment variables** 部分
    - 添加变量：`NODE_VERSION=20`
@@ -128,15 +130,25 @@ wrangler pages deploy dist --project-name=timora
 - **Cloudflare Dashboard**：在环境变量中设置 `NODE_VERSION=20`
 - 查看 [NODE_VERSION.md](./NODE_VERSION.md) 了解详细步骤
 
-### 问题 3: wrangler.toml 配置错误
-**错误信息**：`The entry-point file at "workers-site/index.js" was not found`
+### 问题 3: wrangler 部署命令错误
+**错误信息**：`If are uploading a directory of assets, you can either...`
+
+**原因**：Cloudflare 误认为这是 Workers 项目
 
 **解决方案**: 
-- 删除 `wrangler.toml` 文件（Cloudflare Pages 不需要它）
-  ```bash
-  rm wrangler.toml
-  ```
-- 重新部署
+1. **在 Dashboard 中**：
+   - 确保在 **Pages** 部分创建项目（不是 Workers）
+   - Framework preset 选择 `Vite`
+   - 重新部署
+
+2. **使用 CLI 时**：
+   - 使用 `wrangler pages deploy`，不是 `wrangler deploy`
+   ```bash
+   wrangler pages deploy dist --project-name=timora
+   ```
+
+3. **检查配置文件**：
+   - 项目已包含 `wrangler.jsonc` 文件，明确指定这是 Pages 项目
 
 ### 问题 4: 静态资源加载失败
 **解决方案**: 确保 `vite.config.ts` 中 `base` 设置为 `/`

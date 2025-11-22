@@ -30,4 +30,5 @@ dist-ssr
 # Cloudflare Workers (not needed for Pages)
 wrangler.toml
 .wrangler
+# wrangler.jsonc 需要保留，用于明确指定这是 Pages 项目
 
