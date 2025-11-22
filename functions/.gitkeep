@@ -1,0 +1,3 @@
+# 这个文件确保 functions 目录存在
+# Cloudflare Pages 会识别这是一个 Pages 项目而不是 Workers 项目
+

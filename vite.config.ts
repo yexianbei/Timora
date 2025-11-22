@@ -21,5 +21,7 @@ export default defineConfig({
       },
     },
   },
+  // 明确指定这是静态站点，不是 Workers
+  base: '/',
 })
 
