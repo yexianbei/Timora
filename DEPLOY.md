@@ -189,14 +189,32 @@ jobs:
 
 ## 常见问题
 
-### 1. 路由 404 错误
+### 1. _redirects 无限循环错误
 
-确保 `public/_redirects` 文件存在且内容正确：
+**错误信息**：`Infinite loop detected in this rule`
+
+**解决方案**：使用正确的 `_redirects` 格式（已自动配置）：
 ```
-/*    /index.html   200
+/index.html 200
+/assets/* 200
+/* /index.html 200
 ```
 
-### 2. 构建失败 / Node.js 版本错误
+这个格式避免了无限循环，因为：
+- 首先明确处理 `/index.html` 本身
+- 处理静态资源 `/assets/*`
+- 最后处理所有其他路由
+
+### 2. 路由 404 错误
+
+确保 `public/_redirects` 文件存在且内容正确（已自动配置）：
+```
+/index.html 200
+/assets/* 200
+/* /index.html 200
+```
+
+### 3. 构建失败 / Node.js 版本错误
 
 **错误信息**：`Wrangler requires at least Node.js v20.0.0`
 
@@ -215,7 +233,7 @@ jobs:
   - 确保所有依赖都已正确安装
   - 查看 Cloudflare 构建日志中的错误信息
 
-### 3. wrangler 部署命令错误
+### 4. wrangler 部署命令错误
 
 **错误信息**：
 ```

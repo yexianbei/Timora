@@ -62,23 +62,48 @@ wrangler pages deploy dist --project-name=timora
 
 ---
 
-### 3. 路由返回 404
+### 3. _redirects 无限循环错误
+
+**错误信息**：
+```
+Invalid _redirects configuration:
+Line 1: Infinite loop detected in this rule
+```
+
+**原因**：`_redirects` 文件配置不正确，导致无限循环
+
+**解决方案**：
+1. 使用正确的 `_redirects` 格式（已自动配置）：
+   ```
+   /index.html 200
+   /assets/* 200
+   /* /index.html 200
+   ```
+2. 这个格式会：
+   - 首先处理 `/index.html` 本身（返回 200）
+   - 处理静态资源 `/assets/*`（返回 200）
+   - 最后处理所有其他路由（重定向到 `/index.html`）
+3. 重新构建并部署：
+   ```bash
+   npm run build
+   # 检查 dist/_redirects 文件内容是否正确
+   ```
+
+### 4. 路由返回 404
 
 **错误信息**：访问 `/tasks`、`/timer` 等路由时返回 404
 
 **原因**：SPA 路由没有正确配置
 
 **解决方案**：
-1. 确保 `public/_redirects` 文件存在
-2. 文件内容应该是：
+1. 确保 `public/_redirects` 文件存在且格式正确
+2. 文件内容应该是（已自动配置）：
    ```
-   /*    /index.html   200
+   /index.html 200
+   /assets/* 200
+   /* /index.html 200
    ```
-3. 重新构建并部署：
-   ```bash
-   npm run build
-   # 检查 dist/_redirects 文件是否存在
-   ```
+3. 重新构建并部署
 
 ---
 
