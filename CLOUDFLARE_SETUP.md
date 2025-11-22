@@ -65,16 +65,20 @@ node --version  # 应该显示 v20.x.x
 nvm install 20
 nvm use 20
 
-# 2. 安装 Wrangler
+# 2. 删除 wrangler.toml（如果存在）
+# Cloudflare Pages 不需要这个文件，它会导致部署错误
+rm wrangler.toml
+
+# 3. 安装 Wrangler
 npm install -g wrangler
 
-# 3. 登录
+# 4. 登录
 wrangler login
 
-# 4. 构建
+# 5. 构建
 npm run build
 
-# 5. 部署
+# 6. 部署
 wrangler pages deploy dist --project-name=timora
 ```
 
@@ -124,7 +128,17 @@ wrangler pages deploy dist --project-name=timora
 - **Cloudflare Dashboard**：在环境变量中设置 `NODE_VERSION=20`
 - 查看 [NODE_VERSION.md](./NODE_VERSION.md) 了解详细步骤
 
-### 问题 3: 静态资源加载失败
+### 问题 3: wrangler.toml 配置错误
+**错误信息**：`The entry-point file at "workers-site/index.js" was not found`
+
+**解决方案**: 
+- 删除 `wrangler.toml` 文件（Cloudflare Pages 不需要它）
+  ```bash
+  rm wrangler.toml
+  ```
+- 重新部署
+
+### 问题 4: 静态资源加载失败
 **解决方案**: 确保 `vite.config.ts` 中 `base` 设置为 `/`
 
 ## 📚 相关文档

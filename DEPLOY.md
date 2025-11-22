@@ -42,28 +42,36 @@
 
 **⚠️ 重要：Wrangler 需要 Node.js v20.0.0 或更高版本**
 
+**注意**：Cloudflare Pages 项目不需要 `wrangler.toml` 文件。如果存在该文件，请删除它以避免部署错误。
+
 1. **检查 Node.js 版本**
    ```bash
    node --version
    ```
    如果版本低于 v20，请先升级 Node.js（见下方说明）
 
-2. **安装 Wrangler**
+2. **确保没有 wrangler.toml 文件**
+   ```bash
+   # 如果存在，删除它（Cloudflare Pages 不需要）
+   rm wrangler.toml
+   ```
+
+3. **安装 Wrangler**
    ```bash
    npm install -g wrangler
    ```
 
-3. **登录 Cloudflare**
+4. **登录 Cloudflare**
    ```bash
    wrangler login
    ```
 
-4. **创建 Pages 项目**
+5. **创建 Pages 项目**（如果还没有）
    ```bash
    wrangler pages project create timora
    ```
 
-5. **部署**
+6. **部署**
    ```bash
    # 先构建
    npm run build
@@ -205,6 +213,19 @@ jobs:
 - **检查 Node.js 版本**：
   - 确保所有依赖都已正确安装
   - 查看 Cloudflare 构建日志中的错误信息
+
+### 3. wrangler.toml 配置错误
+
+**错误信息**：`The entry-point file at "workers-site/index.js" was not found` 或 `Because you've defined a [site] configuration`
+
+**原因**：`wrangler.toml` 文件是为 Cloudflare Workers 设计的，Cloudflare Pages 不需要它。
+
+**解决方案**：
+- **删除 `wrangler.toml` 文件**（推荐）
+  ```bash
+  rm wrangler.toml
+  ```
+- Cloudflare Pages 使用 `cloudflare-pages.json` 或 Dashboard 配置，不需要 `wrangler.toml`
 
 ### 3. 静态资源加载失败
 
