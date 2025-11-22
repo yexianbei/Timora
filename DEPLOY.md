@@ -13,8 +13,10 @@
 2. **进入 Settings → Builds & deployments**
 
 3. **找到 "Deploy command" 字段**
-   - ⚠️ **这个字段必须完全为空**
-   - 如果里面有 `npx wrangler deploy` 或任何内容，**全部删除**
+   - ⚠️ **如果这个字段显示"不可为空"**，说明项目可能被误判为 Workers
+   - **解决方案**：填写一个空操作命令：`echo "Static site - no deploy command needed"`
+   - 或者填写：`true`（Linux/Mac 的空操作命令）
+   - **不要**填写 `npx wrangler deploy` 或任何 wrangler 相关命令
 
 4. **检查 "Build command" 字段**
    - 应该填写：`npm run build`
@@ -51,7 +53,10 @@
    - 或者选择 "None" 然后：
      - Build command: `npm run build`
      - Build output directory: `dist`
-   - **Deploy command**: **留空**（不要填任何东西）
+   - **Deploy command**: 
+     - 如果可以留空：**留空**
+     - 如果必须填写：填写 `echo "Static site"` 或 `true`
+     - **不要**填写 `npx wrangler deploy`
    - Node version: **20**
 
 5. **保存并部署**
@@ -93,7 +98,10 @@
      - **Build output directory**: `dist`
    - **Root directory**: `/` (留空)
    - **Node version**: `20`
-   - **Deploy command**: **必须留空**（不要填任何内容）
+   - **Deploy command**: 
+     - 如果可以留空：**留空**
+     - 如果必须填写：填写 `echo "Static site"` 或 `true`
+     - **不要**填写 `npx wrangler deploy`
    
    ⚠️ **关键检查项**：
    - ✅ 确保选择的是 **Pages** 而不是 **Workers**
@@ -178,22 +186,33 @@ npm run build
 
 ## 常见问题
 
-### 1. 错误：Missing entry-point to Worker script
+### 1. 错误：Missing entry-point to Worker script 或 Deploy command 不可为空
 
-**问题**：Cloudflare Pages 误判为 Workers 项目，尝试使用 `wrangler deploy`
+**问题**：Cloudflare Pages 误判为 Workers 项目，或者 Deploy command 字段被要求必填
 
 **解决方案**：
+
+**方案 A：如果 Deploy command 可以留空**
 1. **在 Cloudflare Dashboard 中修复**：
    - Settings → Builds & deployments
    - 找到 "Deploy command" 字段
    - **完全清空这个字段**（删除所有内容）
    - 只保留 "Build command": `npm run build`
+
+**方案 B：如果 Deploy command 必须填写（显示"不可为空"）**
+1. **填写一个空操作命令**：
+   - Deploy command: `echo "Static site - no deploy command needed"`
+   - 或者填写：`true`
+   - **不要**填写 `npx wrangler deploy` 或任何 wrangler 相关命令
 2. **检查项目类型**：
    - Settings → General
    - 确保项目类型是 **Pages**，不是 **Workers**
-3. **如果还是不行**：
-   - 删除项目重新创建
-   - 确保选择 **Pages** 而不是 **Workers**
+   - 如果显示 Workers，需要删除项目重新创建
+
+**方案 C：删除项目重新创建（推荐）**
+1. 删除当前项目（Settings → General → Delete project）
+2. 重新创建，**确保选择 "Pages"** 而不是 "Workers"
+3. 如果 Deploy command 仍然必填，填写 `echo "Static site"` 或 `true`
 
 ### 2. 错误：Wrangler requires at least Node.js v20.0.0
 
