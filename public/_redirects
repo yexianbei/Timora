@@ -1,6 +1,0 @@
-# Cloudflare Pages SPA 路由配置
-# 排除 index.html 和静态资源，避免无限循环
-/index.html 200
-/assets/* 200
-/* /index.html 200
-
