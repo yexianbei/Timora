@@ -7,6 +7,19 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true
-  }
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    // 确保构建输出适合 Cloudflare Pages
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'utils-vendor': ['date-fns', 'zustand'],
+        },
+      },
+    },
+  },
 })
 

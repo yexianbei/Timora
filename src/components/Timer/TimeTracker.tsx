@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Play, Square, Clock, Calendar, User } from 'lucide-react';
 import { formatTime, formatHours } from '../../utils/dateUtils';
-import { Task, Project, Employee } from '../../types';
 import { useStore } from '../../store/useStore';
 
 interface TimeTrackerProps {
@@ -12,25 +11,25 @@ export const TimeTracker: React.FC<TimeTrackerProps> = ({ taskId: initialTaskId 
   const { tasks, projects, employees, timeEntries, startTimer, stopTimer, tickTimer, timer } = useStore();
   const [selectedTaskId, setSelectedTaskId] = useState<string>(initialTaskId || '');
   const [description, setDescription] = useState('');
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [intervalId, setIntervalId] = useState<number | null>(null);
 
   // 定时器 tick
   useEffect(() => {
     if (timer.isRunning && !timer.isPaused) {
-      const id = setInterval(() => {
+      const id = window.setInterval(() => {
         tickTimer();
       }, 1000);
       setIntervalId(id);
       return () => {
-        if (id) clearInterval(id);
+        if (id) window.clearInterval(id);
       };
     } else {
-      if (intervalId) {
-        clearInterval(intervalId);
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
         setIntervalId(null);
       }
     }
-  }, [timer.isRunning, timer.isPaused, tickTimer]);
+  }, [timer.isRunning, timer.isPaused, tickTimer, intervalId]);
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId);
   const selectedProject = selectedTask

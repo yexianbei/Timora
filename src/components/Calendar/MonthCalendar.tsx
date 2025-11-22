@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
-import { format, startOfMonth } from 'date-fns';
+import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getMonthDays, isToday, isCurrentMonth, formatDate } from '../../utils/dateUtils';
-import { CalendarEvent, Task, Project } from '../../types';
+import { CalendarEvent } from '../../types';
 import { useStore } from '../../store/useStore';
 
 interface MonthCalendarProps {

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { User, Plus, X, Search } from 'lucide-react';
-import { Task, Employee, Project } from '../../types';
 import { useStore } from '../../store/useStore';
 
 export const TaskAssignment: React.FC = () => {

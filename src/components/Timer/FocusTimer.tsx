@@ -10,25 +10,25 @@ interface FocusTimerProps {
 
 export const FocusTimer: React.FC<FocusTimerProps> = ({ taskId, onComplete }) => {
   const { timer, startTimer, pauseTimer, resumeTimer, stopTimer, resetTimer, tickTimer } = useStore();
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [intervalId, setIntervalId] = useState<number | null>(null);
 
   // 定时器 tick
   useEffect(() => {
     if (timer.isRunning && !timer.isPaused) {
-      const id = setInterval(() => {
+      const id = window.setInterval(() => {
         tickTimer();
       }, 1000);
       setIntervalId(id);
       return () => {
-        if (id) clearInterval(id);
+        if (id) window.clearInterval(id);
       };
     } else {
-      if (intervalId) {
-        clearInterval(intervalId);
+      if (intervalId !== null) {
+        window.clearInterval(intervalId);
         setIntervalId(null);
       }
     }
-  }, [timer.isRunning, timer.isPaused, tickTimer]);
+  }, [timer.isRunning, timer.isPaused, tickTimer, intervalId]);
 
   const handleStart = () => {
     if (taskId) {

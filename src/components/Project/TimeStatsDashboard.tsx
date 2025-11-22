@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { BarChart3, Clock, Users, TrendingUp } from 'lucide-react';
-import { formatHours, formatTime } from '../../utils/dateUtils';
+import { formatTime } from '../../utils/dateUtils';
 import { ProjectTimeStats } from '../../types';
 import { useStore } from '../../store/useStore';
 
