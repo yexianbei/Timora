@@ -11,25 +11,25 @@ export const TimeTracker: React.FC<TimeTrackerProps> = ({ taskId: initialTaskId 
   const { tasks, projects, employees, timeEntries, startTimer, stopTimer, tickTimer, timer } = useStore();
   const [selectedTaskId, setSelectedTaskId] = useState<string>(initialTaskId || '');
   const [description, setDescription] = useState('');
-  const [intervalId, setIntervalId] = useState<number | null>(null);
+  const [intervalId, setIntervalId] = useState<ReturnType<typeof setInterval> | null>(null);
 
   // 定时器 tick
   useEffect(() => {
     if (timer.isRunning && !timer.isPaused) {
-      const id = window.setInterval(() => {
+      const id = setInterval(() => {
         tickTimer();
       }, 1000);
       setIntervalId(id);
       return () => {
-        if (id) window.clearInterval(id);
+        if (id) clearInterval(id);
       };
     } else {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
+      if (intervalId) {
+        clearInterval(intervalId);
         setIntervalId(null);
       }
     }
-  }, [timer.isRunning, timer.isPaused, tickTimer, intervalId]);
+  }, [timer.isRunning, timer.isPaused, tickTimer]);
 
   const selectedTask = tasks.find((t) => t.id === selectedTaskId);
   const selectedProject = selectedTask

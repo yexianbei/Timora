@@ -1,133 +1,44 @@
 # Cloudflare Pages 部署指南
 
-## ⚠️ 紧急修复：如果遇到 wrangler deploy 错误
+## 部署方式
 
-如果你看到 `Missing entry-point to Worker script` 或 `npx wrangler deploy` 错误，**问题在 Cloudflare Dashboard 的配置**。
-
-### 必须手动在 Cloudflare Dashboard 中修复：
-
-1. **进入 Cloudflare Dashboard**
-   - https://dash.cloudflare.com
-   - 进入你的 Timora 项目
-
-2. **进入 Settings → Builds & deployments**
-
-3. **找到 "Deploy command" 字段**
-   - ⚠️ **如果这个字段显示"不可为空"**，说明项目可能被误判为 Workers
-   - **解决方案**：填写一个空操作命令：`echo "Static site - no deploy command needed"`
-   - 或者填写：`true`（Linux/Mac 的空操作命令）
-   - **不要**填写 `npx wrangler deploy` 或任何 wrangler 相关命令
-
-4. **检查 "Build command" 字段**
-   - 应该填写：`npm run build`
-   - 如果为空，请填写
-
-5. **检查 "Build output directory" 字段**
-   - 应该填写：`dist`
-
-6. **检查 Framework preset**
-   - 选择：**Vite**（这会自动配置正确的设置）
-
-7. **检查 Node version**
-   - 选择：**20**
-
-8. **保存设置**
-   - 点击 "Save"
-   - 然后点击 "Retry deployment" 或等待自动重新部署
-
-### 如果还是不行，删除项目重新创建：
-
-1. **删除当前项目**
-   - Settings → General → 最底部 "Delete project"
-
-2. **重新创建 Pages 项目**
-   - Workers & Pages → Create application
-   - **重要**：选择 **"Pages"** → "Connect to Git"
-   - **不要**选择 "Workers"！
-
-3. **连接 GitHub**
-   - 选择 `yexianbei/Timora` 仓库
-
-4. **配置构建设置**
-   - Framework preset: **Vite**（会自动填充）
-   - 或者选择 "None" 然后：
-     - Build command: `npm run build`
-     - Build output directory: `dist`
-   - **Deploy command**: 
-     - 如果可以留空：**留空**
-     - 如果必须填写：填写 `echo "Static site"` 或 `true`
-     - **不要**填写 `npx wrangler deploy`
-   - Node version: **20**
-
-5. **保存并部署**
-
-## 部署前准备
-
-项目已经配置好所有 Cloudflare Pages 部署所需的文件：
-
-- ✅ `public/_redirects` - SPA 路由重定向配置
-- ✅ `public/_headers` - HTTP 头配置
-- ✅ `vite.config.ts` - 构建配置优化
-- ✅ `.nvmrc` - Node.js 版本指定（Node.js 20）
-- ✅ `package.json` - 包含构建脚本和引擎要求
-- ✅ `cloudflare.json` - Cloudflare Pages 配置文件
-
-## 部署步骤
-
-### 方法一：通过 Cloudflare Dashboard（推荐）
+### 方式一：通过 Cloudflare Dashboard（推荐）
 
 1. **登录 Cloudflare Dashboard**
-   - 访问 https://dash.cloudflare.com
+   - 访问 https://dash.cloudflare.com/
    - 登录你的账户
 
 2. **创建新项目**
-   - 进入 "Workers & Pages"
-   - 点击 "Create application"
-   - **选择 "Pages"** → "Connect to Git"
-   - ⚠️ **重要**：确保选择的是 **Pages**，不是 **Workers**
+   - 进入 **Pages** 页面
+   - 点击 **Create a project**
+   - 选择 **Connect to Git**（如果使用 Git）或 **Upload assets**（直接上传）
 
-3. **连接 GitHub 仓库**
-   - 选择 GitHub 作为 Git 提供商
+3. **连接 Git 仓库（推荐）**
+   - 选择你的 Git 提供商（GitHub、GitLab 等）
    - 授权 Cloudflare 访问你的仓库
-   - 选择 `yexianbei/Timora` 仓库
+   - 选择 `Timora` 仓库
+   - 选择分支（通常是 `main` 或 `master`）
 
 4. **配置构建设置**
-   - **Framework preset**: 选择 **"Vite"**（推荐，会自动配置）
-   - 如果选择 "None"，手动配置：
-     - **Build command**: `npm run build`
-     - **Build output directory**: `dist`
-   - **Root directory**: `/` (留空)
-   - **Node version**: `20`
-   - **Deploy command**: 
-     - 如果可以留空：**留空**
-     - 如果必须填写：填写 `echo "Static site"` 或 `true`
-     - **不要**填写 `npx wrangler deploy`
-   
-   ⚠️ **关键检查项**：
-   - ✅ 确保选择的是 **Pages** 而不是 **Workers**
-   - ✅ **Deploy command** 字段必须完全为空
-   - ✅ 只使用 **Build command**: `npm run build`
-   - ✅ Framework preset 选择 **Vite** 会自动配置正确的设置
+   - **Framework preset**: 选择 `Vite` 或 `None`
+   - **Build command**: `npm run build`
+   - **Build output directory**: `dist`
+   - **Root directory**: `/`（留空或填写 `/`）
+   - **Node version**: `20`（在 Environment variables 中设置 `NODE_VERSION=20`）
 
-5. **环境变量**（如果需要）
-   - 通常不需要额外的环境变量
-   - 如果需要，可以在 "Environment variables" 中添加
+5. **环境变量（可选）**
+   - 如果需要环境变量，在 **Environment variables** 中添加
+   - 例如：`NODE_VERSION=20`
 
 6. **保存并部署**
-   - 点击 "Save and Deploy"
+   - 点击 **Save and Deploy**
    - Cloudflare 会自动构建并部署你的应用
 
-### 方法二：使用 Wrangler CLI（仅用于 Pages）
+### 方式二：使用 Wrangler CLI
 
-⚠️ **注意**：此方法需要 Node.js 20+，因为 wrangler 4.x 需要 Node.js 20+
-
-1. **安装 Wrangler CLI**
+1. **安装 Wrangler**
    ```bash
    npm install -g wrangler
-   ```
-   确保你的 Node.js 版本 >= 20：
-   ```bash
-   node --version  # 应该显示 v20.x.x 或更高
    ```
 
 2. **登录 Cloudflare**
@@ -135,134 +46,135 @@
    wrangler login
    ```
 
-3. **构建项目**
+3. **创建 Pages 项目**
    ```bash
-   npm run build
+   wrangler pages project create timora
    ```
 
-4. **部署到 Cloudflare Pages**
+4. **部署**
    ```bash
+   # 先构建
+   npm run build
+   
+   # 然后部署
    wrangler pages deploy dist --project-name=timora
    ```
-   
-   ⚠️ **重要**：使用 `wrangler pages deploy` 而不是 `wrangler deploy`
 
-## 构建配置说明
+### 方式三：通过 GitHub Actions 自动部署
 
-### 构建命令
-```bash
-npm run build
+创建 `.github/workflows/deploy.yml`：
+
+```yaml
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build
+        run: npm run build
+        
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: timora
+          directory: dist
 ```
 
-这会执行：
-1. TypeScript 类型检查 (`tsc`)
-2. Vite 构建 (`vite build`)
+## 配置说明
 
-### 输出目录
-构建后的文件会输出到 `dist/` 目录，包含：
-- `index.html`
-- `assets/` (JS, CSS 文件)
-- 其他静态资源
+### 构建配置
 
-### SPA 路由配置
-`public/_redirects` 文件确保所有路由都重定向到 `index.html`，这样 React Router 可以正常工作。
+项目已配置好以下内容：
 
-## 部署后验证
+- **构建命令**: `npm run build`
+- **输出目录**: `dist`
+- **SPA 路由**: 通过 `public/_redirects` 文件配置，所有路由都重定向到 `index.html`
 
-部署成功后，你可以：
+### 重要文件
 
-1. **访问你的网站**
-   - Cloudflare 会提供一个 `*.pages.dev` 域名
-   - 例如：`https://timora-xxx.pages.dev`
+1. **`vite.config.ts`**
+   - 配置了构建输出目录为 `dist`
+   - 优化了代码分割
 
-2. **测试功能**
-   - 访问各个页面（日历、任务、计时器等）
-   - 确保路由正常工作
-   - 检查移动端响应式布局
+2. **`public/_redirects`**
+   - 配置了 SPA 路由重定向规则
+   - 确保所有路由都能正确访问
 
-3. **自定义域名**（可选）
-   - 在 Cloudflare Pages 设置中添加自定义域名
-   - 配置 DNS 记录
+3. **`cloudflare-pages.json`**（可选）
+   - Cloudflare Pages 的配置文件
+   - 可以在 Dashboard 中手动配置，也可以使用此文件
+
+### 自定义域名
+
+部署后，你可以：
+
+1. 在 Cloudflare Pages Dashboard 中
+2. 进入你的项目设置
+3. 在 **Custom domains** 部分添加你的域名
+4. Cloudflare 会自动配置 DNS 和 SSL 证书
+
+## 验证部署
+
+部署完成后：
+
+1. 访问 Cloudflare 提供的默认域名（格式：`your-project.pages.dev`）
+2. 测试所有路由是否正常工作：
+   - `/` - 日历视图
+   - `/tasks` - 今日任务
+   - `/timer` - 专注计时
+   - `/tracker` - 时间追踪
+   - `/assignment` - 任务分配
+   - `/stats` - 工时统计
 
 ## 常见问题
 
-### 1. 错误：Missing entry-point to Worker script 或 Deploy command 不可为空
+### 1. 路由 404 错误
 
-**问题**：Cloudflare Pages 误判为 Workers 项目，或者 Deploy command 字段被要求必填
+确保 `public/_redirects` 文件存在且内容正确：
+```
+/*    /index.html   200
+```
 
-**解决方案**：
+### 2. 构建失败
 
-**方案 A：如果 Deploy command 可以留空**
-1. **在 Cloudflare Dashboard 中修复**：
-   - Settings → Builds & deployments
-   - 找到 "Deploy command" 字段
-   - **完全清空这个字段**（删除所有内容）
-   - 只保留 "Build command": `npm run build`
+- 检查 Node.js 版本是否为 20
+- 确保所有依赖都已正确安装
+- 查看 Cloudflare 构建日志中的错误信息
 
-**方案 B：如果 Deploy command 必须填写（显示"不可为空"）**
-1. **填写一个空操作命令**：
-   - Deploy command: `echo "Static site - no deploy command needed"`
-   - 或者填写：`true`
-   - **不要**填写 `npx wrangler deploy` 或任何 wrangler 相关命令
-2. **检查项目类型**：
-   - Settings → General
-   - 确保项目类型是 **Pages**，不是 **Workers**
-   - 如果显示 Workers，需要删除项目重新创建
+### 3. 静态资源加载失败
 
-**方案 C：删除项目重新创建（推荐）**
-1. 删除当前项目（Settings → General → Delete project）
-2. 重新创建，**确保选择 "Pages"** 而不是 "Workers"
-3. 如果 Deploy command 仍然必填，填写 `echo "Static site"` 或 `true`
+- 确保 `vite.config.ts` 中 `base` 设置为 `/`
+- 检查构建输出目录是否为 `dist`
 
-### 2. 错误：Wrangler requires at least Node.js v20.0.0
+### 4. 环境变量
 
-**问题**：Cloudflare Pages 误用了 `wrangler deploy` 命令
+如果需要环境变量：
+- 在 Cloudflare Dashboard 的 Environment variables 中设置
+- 在代码中使用 `import.meta.env.VITE_*` 访问
 
-**解决方案**：
-- 在 Cloudflare Pages 设置中，确保 **Deploy command** 字段为空
-- 只保留 **Build command**: `npm run build`
-- 确保 **Framework preset** 选择 `Vite` 或 `None`
-- 确保项目类型是 **Pages** 而不是 **Workers**
+## 更新部署
 
-### 3. 构建失败
-- 检查 Node.js 版本（需要 >= 20）
-- 确保所有依赖都已安装
-- 查看构建日志中的错误信息
-
-### 4. 路由 404 错误
-- 确保 `public/_redirects` 文件存在
-- 检查文件内容是否正确：`/*    /index.html   200`
-
-### 5. 静态资源加载失败
-- 检查 `vite.config.ts` 中的 `base` 配置（如果需要）
-- 确保所有资源路径都是相对的
-
-### 6. 环境变量
-如果需要环境变量，在 Cloudflare Pages 设置中添加：
-- 进入项目设置
-- 找到 "Environment variables"
-- 添加变量（如 `VITE_API_URL`）
-
-## 持续部署
-
-一旦配置完成，每次推送到 `main` 分支时，Cloudflare Pages 会自动：
+每次推送到主分支后，Cloudflare Pages 会自动：
 1. 检测到新的提交
 2. 运行构建命令
 3. 部署新版本
 
-你可以在 Cloudflare Dashboard 中查看部署历史和状态。
-
-## 性能优化
-
-Cloudflare Pages 自动提供：
-- ✅ CDN 加速
-- ✅ 全球边缘节点
-- ✅ HTTPS 加密
-- ✅ 自动压缩
-- ✅ 缓存优化
-
-## 支持
-
-如有问题，请查看：
-- [Cloudflare Pages 文档](https://developers.cloudflare.com/pages/)
-- [Vite 部署指南](https://vitejs.dev/guide/static-deploy.html)
+你也可以在 Dashboard 中手动触发重新部署。

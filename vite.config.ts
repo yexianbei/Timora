@@ -11,7 +11,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
-    // 确保构建输出适合 Cloudflare Pages
+    // 优化构建输出
     rollupOptions: {
       output: {
         manualChunks: {
@@ -21,7 +21,7 @@ export default defineConfig({
       },
     },
   },
-  // 明确指定这是静态站点，不是 Workers
+  // Cloudflare Pages 部署配置
   base: '/',
 })
 

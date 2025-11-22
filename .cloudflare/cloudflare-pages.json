@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "buildOutputDirectory": "dist",
+  "rootDirectory": "/",
+  "framework": "vite",
+  "nodeVersion": "20"
+}
+

@@ -78,6 +78,38 @@ npm run dev
 npm run build
 ```
 
+构建输出将在 `dist` 目录中。
+
+## 部署到 Cloudflare Pages
+
+项目已配置好 Cloudflare Pages 部署。详细部署指南请查看 [DEPLOY.md](./DEPLOY.md)。
+
+### 快速部署步骤
+
+1. **通过 Cloudflare Dashboard**
+   - 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)
+   - 进入 **Pages** → **Create a project**
+   - 连接你的 Git 仓库
+   - 配置构建设置：
+     - Build command: `npm run build`
+     - Build output directory: `dist`
+     - Framework preset: `Vite`
+   - 点击 **Save and Deploy**
+
+2. **使用 Wrangler CLI**
+   ```bash
+   npm install -g wrangler
+   wrangler login
+   npm run build
+   wrangler pages deploy dist --project-name=timora
+   ```
+
+### 重要配置
+
+- ✅ `public/_redirects` - 配置 SPA 路由重定向
+- ✅ `vite.config.ts` - 已配置构建输出目录
+- ✅ `cloudflare-pages.json` - Cloudflare Pages 配置文件（可选）
+
 ## 组件使用说明
 
 ### 月视图日历组件

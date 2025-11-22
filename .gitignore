@@ -23,6 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Cloudflare
-.wrangler
-.dev.vars
+# Build output
+dist
+dist-ssr
+
